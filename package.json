@@ -1,0 +1,20 @@
+{
+  "name": "JPAR",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cli.js",
+  "bin": {
+    "JPAR": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "CLI_command": "JPAR",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "require-all": "^3.0.0",
+    "yargs": "^16.2.0"
+  }
+}
