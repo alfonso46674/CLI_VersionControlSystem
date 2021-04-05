@@ -17,7 +17,7 @@ jpar init
 ```
 ### Make snapshot of current working directory
 ```sh
-jpar commit -m <message>
+jpar snapshot -m <message>
 ```
 
 ## Uninstall
