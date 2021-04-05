@@ -31,6 +31,9 @@ module.exports.command = function (yargs) {
             fs.mkdirSync(snapshotName);
             //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
             copyFiles('.', snapshotName, nameOfRepo)
+        
+            //create the manifest for the snapshot
+            createSnapshotManifest(snapshotName,argv.message)
 
         } else {
 
@@ -47,6 +50,9 @@ module.exports.command = function (yargs) {
             //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
             copyFiles('.', snapshotName, nameOfRepo)
 
+            //create the manifest for the snapshot
+            createSnapshotManifest(snapshotName,argv.message)
+
         }
     } else {
         console.error('.jpar repository not found');
@@ -54,8 +60,18 @@ module.exports.command = function (yargs) {
     }
 }
 
+//Create the snapshot manifest in the destination path
+function createSnapshotManifest(dest,message){
+    let date = new Date();
+    const snapshotInfo = {
+        date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
+        message: message
+    }
 
-
+    fs.writeFileSync(dest+'/snapshot.json', JSON.stringify(snapshotInfo), (err)=>{
+        if(err) throw err;
+    })
+}
 
 
 function copyFiles(src, dest, folderToIgnore) {
