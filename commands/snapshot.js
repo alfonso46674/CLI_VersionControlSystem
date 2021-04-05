@@ -33,7 +33,7 @@ module.exports.command = function (yargs) {
             copyFiles('.', snapshotName, nameOfRepo)
         
             //create the manifest for the snapshot
-            createSnapshotManifest(snapshotName,argv.message)
+            createSnapshotManifest(snapshotName,argv.message,'1')
 
         } else {
 
@@ -51,7 +51,7 @@ module.exports.command = function (yargs) {
             copyFiles('.', snapshotName, nameOfRepo)
 
             //create the manifest for the snapshot
-            createSnapshotManifest(snapshotName,argv.message)
+            createSnapshotManifest(snapshotName,argv.message, newSnapshotIndex)
 
         }
     } else {
@@ -61,9 +61,10 @@ module.exports.command = function (yargs) {
 }
 
 //Create the snapshot manifest in the destination path
-function createSnapshotManifest(dest,message){
+function createSnapshotManifest(dest,message, snapshotName){
     let date = new Date();
     const snapshotInfo = {
+        snapshot: snapshotName,
         date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
         message: message
     }
