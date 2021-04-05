@@ -4,10 +4,20 @@ Command line interface for a version control system. This small cli can perform 
 
 
 
-## Installation and use
+## Installation
 ```sh
 npm install -g .
-JPAR <command> || JPAR --help
+```
+
+## Commands
+
+### Initialize repository
+```sh
+jpar init
+```
+### Make snapshot of current working directory
+```sh
+jpar commit -m <message>
 ```
 
 ## Uninstall
