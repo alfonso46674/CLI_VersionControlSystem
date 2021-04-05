@@ -19,6 +19,10 @@ jpar init
 ```sh
 jpar snapshot -m <message>
 ```
+### Show snapshot history
+```sh
+jpar log
+```
 
 ## Uninstall
 ```sh
