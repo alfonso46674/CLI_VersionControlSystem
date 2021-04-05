@@ -65,7 +65,7 @@ function createSnapshotManifest(dest,message, snapshotName){
     let date = new Date();
     const snapshotInfo = {
         snapshot: snapshotName,
-        date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate(),
+        date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()+ ' ' + date.getHours()+':'+date.getMinutes()+':'+date.getSeconds(),
         message: message
     }
 
