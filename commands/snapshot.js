@@ -31,9 +31,12 @@ module.exports.command = function (yargs) {
             fs.mkdirSync(snapshotName);
             //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
             copyFiles('.', snapshotName, nameOfRepo)
-        
+
             //create the manifest for the snapshot
-            createSnapshotManifest(snapshotName,argv.message,'1')
+            createSnapshotManifest(snapshotName, argv.message, '1')
+
+            //update the branch_pointer for the recent snapshot, in this case the first snapshot
+            fs.writeFileSync(filesFunctions.obtainPathToBranch('main'), '1')
 
         } else {
 
@@ -51,7 +54,11 @@ module.exports.command = function (yargs) {
             copyFiles('.', snapshotName, nameOfRepo)
 
             //create the manifest for the snapshot
-            createSnapshotManifest(snapshotName,argv.message, newSnapshotIndex)
+            createSnapshotManifest(snapshotName, argv.message, newSnapshotIndex)
+
+            //update the branch_pointer for the recent snapshot
+            fs.writeFileSync('.jpar/refs/branch_pointers/main', newSnapshotIndex.toString())
+
 
         }
     } else {
@@ -61,16 +68,16 @@ module.exports.command = function (yargs) {
 }
 
 //Create the snapshot manifest in the destination path
-function createSnapshotManifest(dest,message, snapshotName){
+function createSnapshotManifest(dest, message, snapshotName) {
     let date = new Date();
     const snapshotInfo = {
         snapshot: snapshotName,
-        date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()+ ' ' + date.getHours()+':'+date.getMinutes()+':'+date.getSeconds(),
+        date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
         message: message
     }
 
-    fs.writeFileSync(dest+'/snapshot.json', JSON.stringify(snapshotInfo), (err)=>{
-        if(err) throw err;
+    fs.writeFileSync(dest + '/snapshot.json', JSON.stringify(snapshotInfo), (err) => {
+        if (err) throw err;
     })
 }
 
