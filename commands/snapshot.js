@@ -1,4 +1,7 @@
 const fs = require('fs-extra')
+const {
+    hashElement
+} = require('folder-hash')
 
 const filesFunctions = require('../helpers/files')
 
@@ -21,46 +24,28 @@ module.exports.command = function (yargs) {
         let nameOfRepo = '.jpar'
         let snapshotBaseName = `${nameOfRepo}/snapshots/`;
 
-        //read the existing numbered folders in /snapshots/ 
-        let files = fs.readdirSync('.jpar/snapshots/')
+        //create a hash based on the working directory
+        hashElement('.',{algo: 'sha1', encoding: 'hex'})
+            .then(hash => {
+                //obtain the hash created from the working directory
+                let hashSnapshot = hash.hash;
+                //append the hashSnapshot to the base path of the snapshots
+                let snapshotPath = snapshotBaseName + '/' + hashSnapshot
+                //create the snapshot folder
+                fs.mkdirSync(snapshotPath);
+                //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
+                copyFiles('.', snapshotPath, nameOfRepo)
+                //create the manifest for the snapshot
+                createSnapshotManifest(snapshotPath, argv.message, hashSnapshot)
+                //update the branch_pointer for the recent snapshot
+                fs.writeFileSync('.jpar/refs/branch_pointers/main', hashSnapshot)
 
-        //if there is no snapshot, create the first one
-        if (files.length == 0) {
-            let snapshotName = snapshotBaseName + '1'
-            //create the first snapshot with 1 as the name of the folder
-            fs.mkdirSync(snapshotName);
-            //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
-            copyFiles('.', snapshotName, nameOfRepo)
-
-            //create the manifest for the snapshot
-            createSnapshotManifest(snapshotName, argv.message, '1')
-
-            //update the branch_pointer for the recent snapshot, in this case the first snapshot
-            fs.writeFileSync(filesFunctions.obtainPathToBranch('main'), '1')
-
-        } else {
-
-            //read the existing numbered folders in /snapshots/ and parse them to integers
-            for (let i in files) {
-                files[i] = parseInt(files[i], 10)
-            }
-            //obtain the highest numbered snapshot and add + 1 to obtain the index for the newest snapshot
-            let newSnapshotIndex = Math.max(...files) + 1;
-            //append the newest index to the snapshot name
-            let snapshotName = snapshotBaseName + newSnapshotIndex.toString()
-            //create the snapshot folder
-            fs.mkdirSync(snapshotName);
-            //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
-            copyFiles('.', snapshotName, nameOfRepo)
-
-            //create the manifest for the snapshot
-            createSnapshotManifest(snapshotName, argv.message, newSnapshotIndex)
-
-            //update the branch_pointer for the recent snapshot
-            fs.writeFileSync('.jpar/refs/branch_pointers/main', newSnapshotIndex.toString())
+            })
+            .catch(error => {
+                return console.error('Error at creating the snapshot: ', error)
+            })
 
 
-        }
     } else {
         console.error('.jpar repository not found');
         process.exit();
