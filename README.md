@@ -17,7 +17,11 @@ jpar init
 ```
 ### Make snapshot of current working directory
 ```sh
-jpar snapshot -m <message>
+jpar snapshot create -m <message>
+```
+### Revert to a previous snapshot 
+```sh
+jpar snapshot revert -n <Snapshot hash>
 ```
 ### Show snapshot history
 ```sh
