@@ -1,4 +1,5 @@
-const fs = require('fs-extra')
+const fs = require('fs-extra');
+const files = require('../../helpers/files');
 
 const filesFunctions = require('../../helpers/files')
 
@@ -15,33 +16,41 @@ module.exports.command = function (yargs) {
         }
     }).argv;
 
-    let snapshotPath = `./.jpar/snapshots/${argv.hashSnapshot}`
+    if (filesFunctions.directoryExists('.jpar')) {
 
-    //check if the commit folder exists
-    if(fs.existsSync(snapshotPath)){
-        
-        //obtain directories in root folder
-        let directories = filesFunctions.getDirectoriesInPath('.');
-        for(let i = 0; i < directories.length; i++){
-            //if the directory isnot .jpar, delete it and everything in it recursively
-            if(!(directories[i] == '.jpar')){
-                fs.rmdirSync(`./${directories[i]}`, {recursive: true})
+        let snapshotPath = `./.jpar/snapshots/${argv.hashSnapshot}`
+
+        //check if the commit folder exists
+        if (fs.existsSync(snapshotPath)) {
+
+            //obtain directories in root folder
+            let directories = filesFunctions.getDirectoriesInPath('.');
+            for (let i = 0; i < directories.length; i++) {
+                //if the directory isnot .jpar, delete it and everything in it recursively
+                if (!(directories[i] == '.jpar')) {
+                    fs.rmdirSync(`./${directories[i]}`, {
+                        recursive: true
+                    })
+                }
             }
+
+            //obtain the remaining files that are in root folder and delete them
+            filesFunctions.deleteFiles('.', '.jpar');
+
+
+            //copy the commit from /snapshots to the working directory
+            filesFunctions.copyFilesFromSnapshotToWD(snapshotPath, '.')
+
+            //update the branch_pointer to the reverted snapshot
+            fs.writeFileSync('.jpar/refs/branch_pointers/main', argv.hashSnapshot)
+
+            return console.log(`Reverted to commit ${argv.hashSnapshot}`);
+        } else {
+            return console.error('Unable to find commit to revert to');
         }
-        
-        //obtain the remaining files that are in root folder and delete them
-        filesFunctions.deleteFiles('.','.jpar');
-
-
-        //copy the commit from /snapshots to the working directory
-        filesFunctions.copyFilesFromSnapshotToWD(snapshotPath,'.')
-
-        //update the branch_pointer to the reverted snapshot
-        fs.writeFileSync('.jpar/refs/branch_pointers/main',argv.hashSnapshot)
-
-        return console.log(`Found commit folder ${argv.hashSnapshot}`);
-    } else{
-        return console.error('Unable to find commit to revert to');
+    } else {
+        console.error('.jpar repository not found');
+        process.exit();
     }
 
 
