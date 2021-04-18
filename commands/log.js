@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const fs = require('fs-extra')
 
 const filesFunctions = require('../helpers/files')
@@ -8,7 +9,7 @@ module.exports.command = function (yargs) {
     if (filesFunctions.directoryExists('.jpar')) {
         let files = fs.readdirSync('.jpar/snapshots/')
         if (files.length == 0) {
-            console.log('No snapshot history to show');
+            console.log(chalk.yellow('No snapshot history to show'));
         } else {
             let logJSONS = []
             for (let i in files) {
@@ -20,7 +21,7 @@ module.exports.command = function (yargs) {
             console.log(logJSONS.sort(compareDates));
         }
     } else {
-        console.error('.jpar repository not found');
+        console.error(chalk.red('.jpar repository not found'));
         process.exit();
     }
 }

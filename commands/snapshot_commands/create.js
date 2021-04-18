@@ -3,7 +3,8 @@ const {
     hashElement
 } = require('folder-hash')
 
-const filesFunctions = require('../../helpers/files')
+const filesFunctions = require('../../helpers/files');
+const chalk = require('chalk');
 
 
 module.exports.description = 'Create snapshot of current directory';
@@ -40,16 +41,16 @@ module.exports.command = function (yargs) {
                 //update the branch_pointer for the recent snapshot
                 fs.writeFileSync('.jpar/refs/branch_pointers/main', hashSnapshot)
 
-                console.log(`Snapshot created: ${hashSnapshot}`);
+                console.log(chalk.green(`Snapshot created: ${hashSnapshot}`));
 
             })
             .catch(error => {
-                return console.error('Error at creating the snapshot: ', error)
+                return console.error(chalk.red('Error at creating the snapshot: ', error))
             })
 
 
     } else {
-        console.error('.jpar repository not found');
+        console.error(chalk.red('.jpar repository not found'));
         process.exit();
     }
 }

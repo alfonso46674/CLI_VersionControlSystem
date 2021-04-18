@@ -1,5 +1,6 @@
 const fs = require('fs')
 const hidefile = require('hidefile')
+const chalk = require('chalk')
 
 const files = require('../helpers/files')
 
@@ -7,7 +8,7 @@ module.exports.description = 'Initialize repository';
 module.exports.command = function (yargs) {
 
     if(files.directoryExists('.jpar')){
-        console.error('Already a jpar repository');
+        console.error(chalk.red('Already a jpar repository'));
         process.exit();
     } else {
         
@@ -32,10 +33,10 @@ module.exports.command = function (yargs) {
             //create the main pointer json file that serves as a pointer to the branch in use
             fs.writeFileSync('.jpar/MAINPOINTER.json',JSON.stringify({ref: 'refs/branch_pointers/main'}))
             
-            console.log('Initialized empty jpar repository at ' + files.getCurrentDirectory().concat(`\\${nameOfRepo}\\`) );
+            console.log(chalk.green('Initialized empty jpar repository at ' + files.getCurrentDirectory().concat(`\\${nameOfRepo}\\`)) );
 
         } else {
-            console.error('Path not valid');
+            console.error(chalk.red('Path not valid'));
             process.exit();
         }
     }

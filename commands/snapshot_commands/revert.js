@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const fs = require('fs-extra');
 const files = require('../../helpers/files');
 
@@ -44,12 +45,12 @@ module.exports.command = function (yargs) {
             //update the branch_pointer to the reverted snapshot
             fs.writeFileSync('.jpar/refs/branch_pointers/main', argv.hashSnapshot)
 
-            return console.log(`Reverted to commit ${argv.hashSnapshot}`);
+            return console.log(chalk.green(`Reverted to commit ${argv.hashSnapshot}`));
         } else {
-            return console.error('Unable to find commit to revert to');
+            return console.error(chalk.red('Unable to find commit to revert to'));
         }
     } else {
-        console.error('.jpar repository not found');
+        console.error(chalk.red('.jpar repository not found'));
         process.exit();
     }
 
