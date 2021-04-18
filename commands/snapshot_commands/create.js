@@ -34,7 +34,7 @@ module.exports.command = function (yargs) {
                 //create the snapshot folder
                 fs.mkdirSync(snapshotPath);
                 //copy all the files from . to the snapshot folder, and ignoring the .jpar folder
-                filesFunctions.copyFiles('.', snapshotPath, nameOfRepo)
+                filesFunctions.copyFilesFromWDtoSnapshot('.', snapshotPath, nameOfRepo)
                 //create the manifest for the snapshot
                 createSnapshotManifest(snapshotPath, argv.message, hashSnapshot)
                 //update the branch_pointer for the recent snapshot
