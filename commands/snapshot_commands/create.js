@@ -40,6 +40,8 @@ module.exports.command = function (yargs) {
                 //update the branch_pointer for the recent snapshot
                 fs.writeFileSync('.jpar/refs/branch_pointers/main', hashSnapshot)
 
+                console.log(`Snapshot created: ${hashSnapshot}`);
+
             })
             .catch(error => {
                 return console.error('Error at creating the snapshot: ', error)
