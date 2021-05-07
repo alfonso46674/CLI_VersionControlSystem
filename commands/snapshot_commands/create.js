@@ -62,7 +62,8 @@ function createSnapshotManifest(dest, message, snapshotName) {
         snapshot: snapshotName,
         // date: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds(),
         date: date.toISOString(),
-        message: message
+        message: message,
+        publishedToRemote:false
     }
 
     fs.writeFileSync(dest + '/snapshot.json', JSON.stringify(snapshotInfo), (err) => {

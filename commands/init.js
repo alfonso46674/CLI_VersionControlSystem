@@ -23,7 +23,8 @@ module.exports.command = function (yargs) {
             
             //folder for storing the snapshots
             fs.mkdirSync(nameOfRepo.concat('/snapshots'));
-            
+            //create a folder for temporal files
+            fs.mkdirSync(nameOfRepo.concat('/temp'))
             //folder for storing references to files or directories
             fs.mkdirSync(nameOfRepo.concat('/refs'));
             //folder to store the remote url to store the snapshots

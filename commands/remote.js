@@ -18,7 +18,7 @@ module.exports.command = function (yargs) {
     if (filesFunctions.directoryExists('.jpar')) {
         if (stringIsValidURL(argv.url)) {
             fs.writeFileSync('.jpar/refs/remote/server', argv.url)
-            console.log(chalk.green(`Remote url added:' ${argv.url}`))
+            console.log(chalk.green(`Remote url added: ${argv.url}`))
         } else {
             console.error(chalk.red('Invalid remote url'));
         }
