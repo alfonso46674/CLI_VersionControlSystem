@@ -28,6 +28,12 @@ jpar snapshot revert -n <Snapshot hash>
 jpar log
 ```
 
+### Add a remote server url to push changes
+```sh
+jpar remote --url <remote url>
+```
+
+
 ## Uninstall
 ```sh
 npm uninstall -g JPAR
