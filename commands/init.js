@@ -26,6 +26,10 @@ module.exports.command = function (yargs) {
             
             //folder for storing references to files or directories
             fs.mkdirSync(nameOfRepo.concat('/refs'));
+            //folder to store the remote url to store the snapshots
+            fs.mkdirSync(nameOfRepo.concat('/refs/remote'));
+            //create file to store the url to remote server
+            fs.writeFileSync('.jpar/refs/remote/server','')
             //folder to store the pointer for the current snapshot in a branch
             fs.mkdirSync(nameOfRepo.concat('/refs/branch_pointers'));
             //create the pointer to the main branch without data in refs/branch_pointers
