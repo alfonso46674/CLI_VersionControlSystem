@@ -1,3 +1,4 @@
+const URL = require('url').URL
 const fs = require('fs-extra')
 const chalk = require('chalk');
 
@@ -14,12 +15,25 @@ module.exports.command = function (yargs) {
             string: true //always parse the address argument as a string
         }
     }).argv;
-    if(filesFunctions.directoryExists('.jpar')){
-        fs.writeFileSync('.jpar/refs/remote/server',argv.url)
-        console.log(chalk.green(`'Remote url added:' ${argv.url}`))
+    if (filesFunctions.directoryExists('.jpar')) {
+        if (stringIsValidURL(argv.url)) {
+            fs.writeFileSync('.jpar/refs/remote/server', argv.url)
+            console.log(chalk.green(`Remote url added:' ${argv.url}`))
+        } else {
+            console.error(chalk.red('Invalid remote url'));
+        }
 
-    }else {
+    } else {
         console.error(chalk.red('.jpar repository not found'))
     }
 
+}
+
+function stringIsValidURL(s) {
+    try {
+        new URL(s)
+        return true
+    } catch {
+        return false
+    }
 }
