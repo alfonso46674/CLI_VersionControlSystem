@@ -33,6 +33,11 @@ jpar log
 jpar remote --url <remote url>
 ```
 
+### Obtain tickets associated to a developers email
+```sh
+jpar assignedTickets --email <email>
+```
+
 
 ## Uninstall
 ```sh
