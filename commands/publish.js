@@ -35,10 +35,13 @@ module.exports.command = function (yargs) {
                         let zipPath = `.jpar/temp/${files[i]}.zip`
                         zip.writeZip(zipPath)
                         
+
+                        let remoteUrl = fs.readFileSync('.jpar/refs/remote/server', 'utf8')
+
                         //create the post options
                        const options = {
                         method: 'POST',
-                        url: fs.readFileSync('.jpar/refs/remote/server', 'utf8'),
+                        url: remoteUrl+'/snapshotReceive',
                         headers:{
                             "Content-Type":"multipart/form-data"
                         },
