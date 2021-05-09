@@ -38,6 +38,11 @@ jpar remote --url <remote url>
 jpar assignedTickets --email <email>
 ```
 
+### Publish a snapshot and relationate it to an existing ticket id
+```sh
+jpar publish --id <ticketId> --snapshot <snapshot hash to publish>
+```
+
 
 ## Uninstall
 ```sh
