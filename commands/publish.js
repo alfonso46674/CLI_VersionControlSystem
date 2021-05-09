@@ -7,32 +7,37 @@ const filesFunctions = require('../helpers/files')
 
 module.exports.description = 'Publish snapshots to remote server';
 module.exports.command = function (yargs) {
-
+        //create yargs new argument for passing a message
+        const argv = yargs.options({
+            id: {
+                demand: true, //this argument is required
+                describe: 'Ticket id',
+                string: true //always parse the address argument as a string
+            },
+            snapshot:{
+                demand: true, //this argument is required
+                describe: 'Snapshot hash',
+                string: true //always parse the address argument as a string
+            }
+        }).argv;
 
     if (filesFunctions.directoryExists('.jpar')) {
-        let publishCounter = 0; //to keep count how many snapshots are published
+        
 
-        let files = fs.readdirSync('.jpar/snapshots/')
-        if (files.length == 0) {
-            console.log(chalk.yellow('No snapshots available'));
-        } else {
-            
-            //iterate through all the available snapshots
-            for (let i in files) {
-                if (fs.existsSync(`.jpar/snapshots/${files[i]}/snapshot.json`)) {
-                    //read the snapshot.json of each snapshot folder
-                    let snapshotManifest = JSON.parse(fs.readFileSync(`.jpar/snapshots/${files[i]}/snapshot.json`,'utf-8'))
+     
+            //verify that snapshot exists
+                if (fs.existsSync(`.jpar/snapshots/${argv.snapshot}/snapshot.json`)) {
+                    //read the snapshot.json 
+                    let snapshotManifest = JSON.parse(fs.readFileSync(`.jpar/snapshots/${argv.snapshot}/snapshot.json`,'utf-8'))
                     //if the snapshot has not been published, do it by a POST http request to the remote server
                     if(!snapshotManifest.publishedToRemote){
-                        //increment counter
-                        publishCounter+=1
-
+                        
                     //first do a zip of the snapshot, so it can be sent in one file
                         let zip = new AdmZip()
                         //Zip the current snapshot folder in the loop
-                        zip.addLocalFolder(`.jpar/snapshots/${files[i]}`)
+                        zip.addLocalFolder(`.jpar/snapshots/${argv.snapshot}`)
                         //save the zip in .jpar/temp and with the same name as the snapshot
-                        let zipPath = `.jpar/temp/${files[i]}.zip`
+                        let zipPath = `.jpar/temp/${argv.snapshot}.zip`
                         zip.writeZip(zipPath)
                         
 
@@ -47,20 +52,21 @@ module.exports.command = function (yargs) {
                         },
                         formData:{
                             //the snapshot_data is the key in the formData, this key must match on the receiving end of the post request
-                            "snapshot_data": fs.createReadStream(zipPath)
+                            "snapshot_data": fs.createReadStream(zipPath),
+                            'ticket_id': argv.id
                         }
                         };
 
                         //do the post request
                         request(options,function(err,res,body){
                             if(err || res.statusCode == 400) {
-                                console.error(chalk.red(`Error while publishing snapshot: ${files[i]}`))
+                                console.error(chalk.red(`Error while publishing snapshot: ${argv.snapshot}`))
                             }else{
-                                // console.log(body);
+                                console.log(chalk.green(JSON.parse(body).ticketStatus));
                                 //set the publishedToRemote property to true
                                 snapshotManifest.publishedToRemote = true
                                 //rewrite the snapshot.json manifest
-                                fs.writeFileSync(`.jpar/snapshots/${files[i]}/snapshot.json`,JSON.stringify(snapshotManifest))
+                                fs.writeFileSync(`.jpar/snapshots/${argv.snapshot}/snapshot.json`,JSON.stringify(snapshotManifest))
                             }
                         })
 
@@ -68,14 +74,14 @@ module.exports.command = function (yargs) {
                        fs.unlinkSync(zipPath)
                     }
                 }
-            }
-
-            if(publishCounter == 0){
-                console.log('Nothing to publish; Everything is up to date');
+            
+                //read the publishedToRemote property of the manifest.json from the snapshot
+            if((JSON.parse(fs.readFileSync(`.jpar/snapshots/${argv.snapshot}/snapshot.json`,'utf-8')).publishedToRemote)){
+                console.log(chalk.red(`Snapshot ${argv.snapshot} already published`));
             } else{
-                console.log(`Published ${publishCounter} snapshots to ${fs.readFileSync('.jpar/refs/remote/server', 'utf8')}`);
+                console.log(chalk.green(`Snapshot ${argv.snapshot} published to ${fs.readFileSync('.jpar/refs/remote/server', 'utf8')}`));
             }
-        }
+        
         
             
        
