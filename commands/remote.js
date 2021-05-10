@@ -17,6 +17,10 @@ module.exports.command = function (yargs) {
     }).argv;
     if (filesFunctions.directoryExists('.jpar')) {
         if (stringIsValidURL(argv.url)) {
+            
+            //check if the last character of the url is /, if so remove it
+            if(argv.url.slice(-1) == '/') argv.url = argv.url.slice(0,-1)
+
             fs.writeFileSync('.jpar/refs/remote/server', argv.url)
             console.log(chalk.green(`Remote url added: ${argv.url}`))
         } else {
